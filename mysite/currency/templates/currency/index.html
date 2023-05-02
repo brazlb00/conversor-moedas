@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Django Highcharts</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa\9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="block">
+        <form method="post" id="task">
+            {% csrf_token %}
+            <button class="btn btn-info pull-right is-medium mt-5" type="submit">
+                Atualiza Banco
+            </button>
+        </form>
+    </div>
+    <div id="container" data-url="{% url 'cotacao' %}">
+        <div id="test"></div>
+    </div>
+    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $.ajax({
+            url: $("#container").attr("data-url"),
+            dataType: 'json',
+            success: function(data) {
+            Highcharts.chart("container", data);
+            }
+        });
+    </script>
+    <script type="text/javascript"> 
+        $(document).on('submit','#task',function(e){
+            e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'{% url "save_api" %}',
+                data:
+                    {
+                        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                success:function(){
+                      alert('Saved');
+                      window.location.reload();
+                        }
+                })
+            });
+        </script>
+  </body>
+</html>
